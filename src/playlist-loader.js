@@ -6,7 +6,7 @@
  */
 import resolveUrl from './resolve-url';
 import { mergeOptions, EventTarget, log } from 'video.js';
-import m3u8 from 'm3u8-parser';
+import * as m3u8 from 'm3u8-parser';
 import window from 'global/window';
 
 /**
@@ -252,6 +252,11 @@ export default class PlaylistLoader extends EventTarget {
     this.state = 'HAVE_METADATA';
 
     const parser = new m3u8.Parser();
+
+    parser.addParser({
+      expression: /^#EXT-X-MEDIA-OFFSET/,
+      customType: 'customMediaOffset'
+    });
 
     parser.push(xhr.responseText);
     parser.end();
@@ -515,6 +520,11 @@ export default class PlaylistLoader extends EventTarget {
       }
 
       const parser = new m3u8.Parser();
+
+      parser.addParser({
+        expression: /^#EXT-X-MEDIA-OFFSET/,
+        customType: 'customMediaOffset'
+      });
 
       parser.push(req.responseText);
       parser.end();
